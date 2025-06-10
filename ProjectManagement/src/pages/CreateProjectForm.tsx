@@ -25,8 +25,8 @@ const url = import.meta.env.VITE_API_URL;
 const CreateProjectForm: React.FC<Props> = () => {
 
   const location = useLocation();
-  const project = location.state?.project;  
-  console.log(project)
+  const project = location.state?.project;  // derived Project data from the previous page using react-router as state management 
+  
   
   const [userData, setUserData] = React.useState('');
 
@@ -45,7 +45,7 @@ const CreateProjectForm: React.FC<Props> = () => {
             try {
               const user = await service.getCurrentUser();
               setUserData(user.data._id);
-              console.log(userData);
+             
             } catch (error) {
               console.log(error);
             }
@@ -69,17 +69,17 @@ const CreateProjectForm: React.FC<Props> = () => {
 
 
   const onSubmit = async (data: any) => {
-      console.log(data)
     try {
       const formattedData = {
         ...data,
         requiredSkills: data.requiredSkills.split(',').map((skill: string) => skill.trim()),
         managerId:userData
       };
-
+      
       const endpoint = project?._id ? `/api/projects/${project._id}`: '/api/projects/';
-
-   
+      
+      
+      // conditional check for create and update
 
       const method = project?._id ? 'PUT' : 'POST';
       console.log(method)

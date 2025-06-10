@@ -44,6 +44,7 @@ const AssignmentTable = () => {
     fetchAssignments();
 
     async function getProjectData() {
+      
       const projectData = await service.getAllProjects();
       setProjects(projectData.projects);
 
@@ -67,12 +68,15 @@ const AssignmentTable = () => {
   const onSubmit = async (data: any) => {
     console.log(data);
     try {
+ 
+      // handling edit and create assignment based on edittingAssignment Flag
+
       if (editingAssignment) {
         await service.updateAssignment(editingAssignment._id, data);
       } else {
         await service.createAssignment(data);
       }
-      reset();
+      reset(); // from react-hook-form - it resets the fields
       setEditingAssignment(null);
       fetchAssignments();
     } catch (err) {
@@ -82,9 +86,13 @@ const AssignmentTable = () => {
 
   const handleEdit = (assignment: any) => {
     setEditingAssignment(assignment);
+
+    // setting the values in the form using setValue a react-hook-form method
     Object.entries(assignment).forEach(([key, value]) => setValue<FormValues | any>(key, value));
   };
     
+
+  // deletion of assignment based on Id
   const handleDelete = async (id: string) => {
   const confirmDelete = window.confirm("Do you want to delete this assignment?");
   
@@ -109,16 +117,19 @@ const AssignmentTable = () => {
   return (
     <div className="max-w-4xl mx-auto  p-6 border border-[#334D66] rounded-xl shadow-lg bg-[#1A2633] text-white mt-24">
       <h2 className="text-2xl font-bold mb-6 text-center">
-        {editingAssignment ? "Edit Assignment" : "Create Assignment"}
+        {editingAssignment ? "Edit Assignment" : "Create Assignment"} // conditional rendering for Heading
       </h2>
 
+
+        {/* form starts here */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <label className="block mb-1 font-medium text-white">Engineer</label>
           <select
             {...register("engineerId", { required: "Engineer is required" })}
-            className="w-full p-2 border border-[#94ADC7] rounded-xl bg-[#334D66] text-white"
-          >
+            className="w-full p-2 border border-[#94ADC7] rounded-xl bg-[#334D66] text-white">
+
+              {/* selecting an engineer */}
             <option value="">Select an engineer</option>
             {engineers.map((engineer: any) => (
               <option key={engineer._id} value={engineer._id}>
@@ -133,7 +144,9 @@ const AssignmentTable = () => {
           )}
         </div>
 
-        <div>
+
+            {/* Selecting a project */}
+        <div> 
           <label className="block mb-1 font-medium text-white">Project</label>
           <select
             {...register("projectId", { required: "Project is required" })}
@@ -151,6 +164,8 @@ const AssignmentTable = () => {
           )}
         </div>
 
+          {/* Allocation % */}
+
         <div>
           <label className="block mb-1 font-medium">Allocation %</label>
           <Input
@@ -164,6 +179,7 @@ const AssignmentTable = () => {
           />
         </div>
 
+            {/* Start dates */}
         <div>
           <label className="block mb-1 font-medium">Start Date</label>
           <Input
@@ -172,7 +188,8 @@ const AssignmentTable = () => {
             className="w-full p-2 border border-[#94ADC7] rounded-xl bg-[#334D66]"
           />
         </div>
-
+   
+              {/* End dates */}
         <div>
           <label className="block mb-1 font-medium">End Date</label>
           <Input
@@ -199,6 +216,9 @@ const AssignmentTable = () => {
         </Button>
       </form>
 
+
+      {/* Table starts here */}
+
       <h2 className="text-xl font-semibold mt-10 mb-4">All Assignments</h2>
      <div className="overflow-x-auto  w-full">
   <table className="min-w-full text-white border border-[#334D66]">
@@ -212,31 +232,41 @@ const AssignmentTable = () => {
         <th className="px-4 py-2 whitespace-nowrap">Actions</th>
       </tr>
     </thead>
+
+    {/*  table body data extracted from assignments state */}
     <tbody>
       {assignments.map((a:any) => (
         <tr key={a._id} className="text-center border-t border-[#94ADC7] text-sm md:text-base">
           <td className="px-4 py-2 whitespace-nowrap">
+
+            {/* finding the Engineer's name using their id from assignments */}
             {engineers.find((e: any) => e._id === a.engineerId)?.name || "Unknown"}
           </td>
+
+          {/* finding the Project's name using their id from assignments */}
           <td className="px-4 py-2 whitespace-nowrap">
             {projects.find((p: any) => p._id === a.projectId)?.name || "Unknown"}
           </td>
+
+          {/* Allocation % , role and dates */}
           <td className="px-4 py-2 whitespace-nowrap">{a.allocationPercentage}%</td>
           <td className="px-4 py-2 whitespace-nowrap">{a.role}</td>
           <td className="px-4 py-2 whitespace-nowrap">
             {a.startDate?.slice(0, 10)} to {a.endDate?.slice(0, 10)}
           </td>
           <td className="px-4 py-2 whitespace-nowrap space-y-1">
+
+        {/* Edit Button */}
             <button
               onClick={() => handleEdit(a)}
-              className="bg-[#4a6177] px-4 py-1 rounded-xl hover:bg-[#5b748c] text-sm"
-            >
+              className="bg-[#4a6177] px-4 py-1 rounded-xl hover:bg-[#5b748c] text-sm" >
               Edit
             </button>
+
+          {/* Delete Button */}
             <button
               onClick={() => handleDelete(a._id)}
-              className="bg-[#4a6177] px-4 py-1 rounded-xl hover:bg-[#5b748c] text-sm block w-full"
-            >
+              className="bg-[#4a6177] px-4 py-1 rounded-xl hover:bg-[#5b748c] text-sm block w-full">
               Delete
             </button>
           </td>
