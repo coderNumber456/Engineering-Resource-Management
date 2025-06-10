@@ -1,9 +1,21 @@
-import React, { use, useCallback, useEffect, useMemo, useState } from "react";
+import React, {  useCallback, useEffect, useMemo, useState } from "react";
 import { service } from "../Service/service";
+
+
+type Project = {
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  requiredSkills: string[];
+  teamSize: number;
+  status: string;
+  _id: string;
+};
 
 const Teams: React.FC = () => {
   const [assignments, setAssignments] = useState([]);
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState<Project|any>([]);
   const [engineers, setEngineers] = useState([]);
   const [search ,setSearch] = useState(''); 
   const [serachedEngineers ,setSerachedEngineers] = useState([]); 
@@ -58,7 +70,7 @@ const Teams: React.FC = () => {
   /**
    * Memoized transformation of engineers with available capacity
    */
-  const updatedEngineers = useMemo(() => {
+  const updatedEngineers: any = useMemo(() => {
     return engineers.map((engineer: any) => {
       const { availableCapacity, activeAssignments } = getAvailableCapacity(
         engineer._id,

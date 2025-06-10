@@ -2,14 +2,23 @@ import { service } from '@/Service/service';
 import React, {  useEffect } from 'react';
 
 
+type User={
+  name:string,
+  email:string,
+  skills:string |string[],
+  role:string,
+  _id:string,
+   seniority:string,
+   maxCapacity:number,
 
+}
 
 
 const Profile: React.FC = () => {
 
-const [user , setUser] = React.useState({});
-const [edit ,setEdit] = React.useState(true);
-const [skills ,setSkills] = React.useState("");
+const [user , setUser] = React.useState<User|null >(null);
+const [edit ,setEdit] = React.useState<Boolean>(true);
+const [skills ,setSkills] = React.useState<string>("");
 
    useEffect(() => {
 
@@ -29,11 +38,13 @@ const [skills ,setSkills] = React.useState("");
 
   const updateSkills = async function(){
 
-     user.skills = skills;    
-    const response = await service.updateUser(user,user._id);
-
-    if(response){
-      setEdit(true);
+    if(user){
+      user.skills = skills;    
+      const response = await service.updateUser(user,user._id);
+      
+          if(response){
+            setEdit(true);
+          }
     }
   }
      
@@ -47,28 +58,28 @@ const [skills ,setSkills] = React.useState("");
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-semibold text-gray-400">Name</label>
-          <p className="text-lg font-medium">{user.name}</p>
+          <p className="text-lg font-medium">{user?.name}</p>
         </div>
 
         <div>
           <label className="block text-sm font-semibold text-gray-400">Email</label>
-          <p className="text-lg font-medium">{user.email}</p>
+          <p className="text-lg font-medium">{user?.email}</p>
         </div>
 
         <div>
           <label className="block text-sm font-semibold text-gray-400">Role</label>
-          <p className="text-lg font-medium capitalize">{user.role}</p>
+          <p className="text-lg font-medium capitalize">{user?.role}</p>
         </div>
 
-       { user.role !== "manager" && <div>
+       { user?.role !== "manager" && <div>
           <label className="block text-sm font-semibold text-gray-400">Max Capacity</label>
-          <p className="text-lg font-medium">{user.maxCapacity}</p>
+          <p className="text-lg font-medium">{user?.maxCapacity}</p>
         </div>}
-       { user.role !== "manager" && <div>
+       { user?.role !== "manager" && <div>
           <label className="block text-sm font-semibold text-gray-400">Seniority</label>
-          <p className="text-lg font-medium">{user.seniority}</p>
+          <p className="text-lg font-medium">{user?.seniority}</p>
         </div>}
-       { user.role !== "manager" && <div>
+       { user?.role !== "manager" && <div>
           <label className="block text-sm font-semibold text-gray-400">Skills</label>
        {  !edit ? <input type="text" value={skills} onChange={(e) => {setSkills(e.target.value)}} className="w-full p-2 border border-[#94ADC7] rounded-xl bg-[#334D66] text-white"/> : <p className="text-lg font-medium">{skills}</p>}
 

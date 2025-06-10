@@ -4,11 +4,33 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { service } from "@/Service/service";
 
+type FormValues = {
+  projectId: string;
+  engineerId: string;
+  allocationPercentage: number;
+  startDate: string;
+  endDate: string;
+  role: string;
+};
+ 
+type Assignment = {
+  _id: string;
+  projectId: string;
+  engineerId: string;
+  allocationPercentage: number;
+  startDate: string;
+  endDate: string;
+  role: string;
+};
+
+type TableArray = {
+name: string;
+}
 const AssignmentTable = () => {
   const [assignments, setAssignments] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [editingAssignment, setEditingAssignment] = useState(null);
-  const [engineers, setEngineers] = useState([]);
+  const [projects, setProjects] = useState<TableArray[]>([]);
+  const [editingAssignment, setEditingAssignment] = useState<Assignment | null>(null);
+  const [engineers, setEngineers] = useState<TableArray[]>([]);
 
   const {
     register,
@@ -16,7 +38,7 @@ const AssignmentTable = () => {
     reset,
     setValue,
     formState: { errors },
-  } = useForm();
+  } = useForm<FormValues>();
 
   useEffect(() => {
     fetchAssignments();
@@ -60,7 +82,7 @@ const AssignmentTable = () => {
 
   const handleEdit = (assignment: any) => {
     setEditingAssignment(assignment);
-    Object.entries(assignment).forEach(([key, value]) => setValue(key, value));
+    Object.entries(assignment).forEach(([key, value]) => setValue<FormValues | any>(key, value));
   };
     
   const handleDelete = async (id: string) => {
@@ -191,7 +213,7 @@ const AssignmentTable = () => {
       </tr>
     </thead>
     <tbody>
-      {assignments.map((a) => (
+      {assignments.map((a:any) => (
         <tr key={a._id} className="text-center border-t border-[#94ADC7] text-sm md:text-base">
           <td className="px-4 py-2 whitespace-nowrap">
             {engineers.find((e: any) => e._id === a.engineerId)?.name || "Unknown"}

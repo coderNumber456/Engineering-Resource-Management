@@ -4,12 +4,23 @@ import { useEffect, useState } from "react";
 import { service } from "@/Service/service";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/Context/AuthContext";
-import { set } from "react-hook-form";
+
+
+
+type Project = {
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  requiredSkills: string[];
+  teamSize: number;
+  status: string;
+  _id: string;
+};
 
 function Home() {
   const [projects, setProjects] = useState([]);
-  const [userProjects, setUserProjects] = useState([]);
-  const [dataReady, setDataReady ] = useState(false);
+  const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [assignments, setAssignments] = useState([]);
   const [userRole, setUserRole] = useState(" ");
   const navigate = useNavigate();
@@ -30,7 +41,7 @@ function Home() {
         setProjects(projectRes.projects);
         setUser(currrentUser.data);
         setUserRole(currrentUser.data.role);
-        setDataReady(true);
+       
 
       } catch (error) {
         console.error("Error fetching data:", error);
