@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { service } from "@/Service/service";
+import { useAvailableCapacity } from "@/Service/AvailableCapacity";
+
 
 type FormValues = {
   projectId: string;
@@ -31,6 +33,12 @@ const AssignmentTable = () => {
   const [projects, setProjects] = useState<TableArray[]>([]);
   const [editingAssignment, setEditingAssignment] = useState<Assignment | null>(null);
   const [engineers, setEngineers] = useState<TableArray[]>([]);
+  const [updatedEngineers, setUpdatedEngineers] = useState<TableArray[]>([]);
+
+   const getAvailableCapacity = useAvailableCapacity()
+
+
+
 
   const {
     register,
@@ -54,7 +62,7 @@ const AssignmentTable = () => {
     getProjectData();
   }, []);
 
-  console.log(projects);
+
 
   const fetchAssignments = async () => {
     try {
@@ -64,6 +72,29 @@ const AssignmentTable = () => {
       console.error(err);
     }
   };
+
+   const getEngineersCapacity: any = useMemo(() => {
+       return engineers.map((engineer: any) => {
+         const { availableCapacity, activeAssignments } = getAvailableCapacity(
+           engineer._id,
+           engineer.maxCapacity,
+           assignments
+         );
+         
+         return {
+           ...engineer,
+           availableCapacity,
+           activeAssignments,
+         };
+       });
+     }, [engineers, getAvailableCapacity]);
+
+     useEffect(() => {
+         setUpdatedEngineers(getEngineersCapacity);
+       }, [getEngineersCapacity]);
+
+
+  console.log(updatedEngineers)
 
   const onSubmit = async (data: any) => {
     console.log(data);
@@ -116,8 +147,10 @@ const AssignmentTable = () => {
 
   return (
     <div className="max-w-4xl mx-auto  p-6 border border-[#334D66] rounded-xl shadow-lg bg-[#1A2633] text-white mt-24">
-      <h2 className="text-2xl font-bold mb-6 text-center">
-        {editingAssignment ? "Edit Assignment" : "Create Assignment"} // conditional rendering for Heading
+       
+       {/*  conditional rendering for Heading */}
+      <h2 className="text-2xl font-bold mb-6 text-center"> 
+        {editingAssignment ? "Edit Assignment" : "Create Assignment"} 
       </h2>
 
 
@@ -131,10 +164,10 @@ const AssignmentTable = () => {
 
               {/* selecting an engineer */}
             <option value="">Select an engineer</option>
-            {engineers.map((engineer: any) => (
+            {updatedEngineers.map((engineer: any) => (
               <option key={engineer._id} value={engineer._id}>
-                {`${engineer.name} - ${engineer.skills.join(", ")} - Max: ${
-                  engineer.maxCapacity
+                {`${engineer.name} - Skills : ${engineer.skills.join(", ")} - Avalability: ${
+                  engineer.availableCapacity
                 }%`}
               </option>
             ))}
@@ -155,7 +188,7 @@ const AssignmentTable = () => {
             <option value="">Select a project</option>
             {projects.map((project: any) => (
               <option key={project._id} value={project._id}>
-                {project.name}
+                {project.name} -  {project.startDate?.slice(0, 10)} to {project.endDate?.slice(0, 10)} status : {project.status}
               </option>
             ))}
           </select>

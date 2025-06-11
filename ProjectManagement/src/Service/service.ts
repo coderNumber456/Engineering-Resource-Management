@@ -3,37 +3,44 @@ const url = import.meta.env.VITE_API_URL
 
 class API {
 
-     async login(data: any) {
-     try {
-          const response = await fetch(`${url}/api/auth/login`, {
-             method: "POST",
-             credentials: 'include',
-             headers: {
-               "Content-Type": "application/json",
-             },
-             body: JSON.stringify(data),
+       async login(data: any) {
+  try {
+    const response = await fetch(`${url}/api/auth/login`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-           
-           });
+    // Handle errors before parsing
+    if (!response.ok) {
+      // Try to safely extract JSON error message
+      let errorMessage = "Login failed";
 
-           console.log("done")
-           console.log(response)
-    
-           const result = await response.json();
-    
-           if (!response.ok) {
-             throw new Error(result.message || "Login failed");
-           }
-           return result;
-    
-           // On success, navigate to dashboard or next route
-
-     } catch (error) {
-        console.log(error);
-     }
-
-
+      try {
+        const errorResponse = await response.json();
+        errorMessage = errorResponse.message || errorMessage;
+      } catch (jsonErr) {
+        // Fallback in case the response is not JSON (e.g. HTML)
+        console.error("Failed to parse error JSON:", jsonErr);
+        const text = await response.text();
+        console.warn("Error response text:", text.slice(0, 200));
       }
+
+      throw new Error(errorMessage);
+    }
+
+    // Safe to parse JSON now
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Login error:", error);
+    throw error; // Optional: rethrow or handle in UI
+  }
+}
+
 
       async getCurrentUser(){
         try {

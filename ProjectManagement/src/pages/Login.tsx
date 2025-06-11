@@ -26,7 +26,7 @@ function Login() {
         navigate("/home");
       }
     } catch (error) {
-      setApiError("Login failed");
+      setApiError("Login failed" + error);
     }
   };
 
