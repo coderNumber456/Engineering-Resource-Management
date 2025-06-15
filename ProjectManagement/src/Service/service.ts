@@ -3,7 +3,7 @@ const url = import.meta.env.VITE_API_URL
 
 class API {
 
-       async login(data: any) {
+ async login(data: any) {
   try {
     const response = await fetch(`${url}/api/auth/login`, {
       method: "POST",
@@ -14,15 +14,19 @@ class API {
       body: JSON.stringify(data),
     });
 
+   
     // Handle errors before parsing
+    console.log(response)
     if (!response.ok) {
       // Try to safely extract JSON error message
       let errorMessage = "Login failed";
+
 
       try {
         const errorResponse = await response.json();
         errorMessage = errorResponse.message || errorMessage;
       } catch (jsonErr) {
+        console.log(jsonErr)
         // Fallback in case the response is not JSON (e.g. HTML)
         console.error("Failed to parse error JSON:", jsonErr);
         const text = await response.text();
@@ -37,11 +41,11 @@ class API {
     return result;
   } catch (error) {
     console.error("Login error:", error);
-    throw error; // Optional: rethrow or handle in UI
+    throw (" Invalid Email or Password"); // Optional: rethrow or handle in UI
   }
 }
 
-
+    // Method to fetch current User
       async getCurrentUser(){
         try {
             const response = await fetch(`${url}/api/auth/profile`, {
@@ -54,7 +58,7 @@ class API {
             const result = await response.json();
     
             if (!response.ok) {
-              throw new Error(result.message || "Login failed");
+              throw new Error(result.message || "Failed to get User");
             }
             return result;
     
@@ -64,6 +68,7 @@ class API {
           }
       }
 
+       // Method to fetch All Projects
       async getAllProjects(){
         try {
           const response = await fetch(`${url}/api/projects`, {
@@ -74,7 +79,7 @@ class API {
           });
           const result = await response.json();
           if (!response.ok) {
-            throw new Error(result.message || "Login failed");
+            throw new Error(result.message || "Failed to get Projects");
           }
           return result;
         } catch (error) {
@@ -82,6 +87,7 @@ class API {
         }
       }
 
+       // Method to fetch to Project
       async getProject(id :any){
         try {
           const response = await fetch(`${url}/api/projects/${id}`, {
@@ -101,6 +107,8 @@ class API {
 
       }
 
+
+// Method to fetch all Assignments
       async getAllAssignments(){
 
       try {
@@ -119,7 +127,7 @@ class API {
            console.log(error);
       }}
 
-
+    // Method to fetch All Engineers
       async getAllEngineers(){
         try {
           const response = await fetch(`${url}/api/engineers`, {
@@ -139,6 +147,7 @@ class API {
         }
       }
 
+      // Method to fetch Create an Assignment
       async createAssignment(data:any){
          
         const response = await fetch(`${url}/api/assignments`, {
@@ -156,6 +165,7 @@ class API {
 
       }
 
+       // Method to Update Assignment
       async updateAssignment(id:string,data:any){
 
         const response = await fetch(`${url}/api/assignments/${id}`, {
@@ -172,6 +182,7 @@ class API {
         return result;
       }
 
+        // Method to fetch Active Assignments
       async getActiveAssignments(id:string){
   
          try {
@@ -194,6 +205,7 @@ class API {
          }
         }
 
+        // Method to fetch Logout User
       async logout()  {
           try {
             const response = await fetch(`${url}/api/auth/logout`, {
@@ -213,6 +225,7 @@ class API {
           }
         };
 
+        // Method to fetch User Profile
         async updateUser(user:any,id:string) {
           try {
             const response = await fetch(`${url}/api/auth/${id}`, {
@@ -225,7 +238,7 @@ class API {
             });
             const result = await response.json();
             if (!response.ok) {
-              throw new Error(result.message || "Logout failed");
+              throw new Error(result.message || "Failed to Update the User");
             }
             return result;
           } catch (error) {
@@ -233,6 +246,7 @@ class API {
           }
         }
 
+        // Method to fetch Delete Assignment
         async deleteAssignment(id:string){
              try {
                   const response = await fetch(`${url}/api/assignments/${id}`,{

@@ -89,6 +89,17 @@ function Login() {
           <p className="text-red-600 text-center mt-2">{apiError}</p>
         )}
       </form>
+
+      {/*  Sample Data */}
+
+      <div className="text-gray-300 flex justify-center flex-col mt-2 ">
+        <h1> email: manager1@example.com </h1>    
+        <h1> Password : manager1password123 </h1>
+      </div>
+      <div className="text-gray-300 flex justify-center flex-col mt-2 ">
+        <h1> email: Thor@example.com </h1>    
+        <h1> Password : Thorpassword123 </h1>
+      </div>
     </div>
   );
 }

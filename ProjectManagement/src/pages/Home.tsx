@@ -59,8 +59,8 @@ function Home() {
         }
       }, [assignments,projects,user]);
       
-      console.log(projects)
-      function getUserProjects() {
+     
+       function getUserProjects() {
         const userAssisgnments = assignments.filter(
         (assignment: any) => assignment.engineerId === user._id
       );
@@ -72,7 +72,7 @@ function Home() {
         )
       );
     
-      console.log(currentProjects);
+
       setUserProjects(currentProjects);
       }
       

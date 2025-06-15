@@ -25,8 +25,6 @@ const [skills ,setSkills] = React.useState<string>("");
     async function getUser() {
          try {
            const userData = await service.getCurrentUser();
-          
-           console.log(userData);
            setUser(userData.data);
            setSkills(userData.data.skills);
          } catch (error) {
