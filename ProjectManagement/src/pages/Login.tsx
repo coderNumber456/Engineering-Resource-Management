@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { service } from "@/Service/service";
+import { Loader2 } from "lucide-react";
 
 type FormData = {
   email: string;
@@ -18,15 +19,20 @@ function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [apiError, setApiError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (data: FormData) => {
+    setLoading(true);
+    setApiError("");
     try {
       const result = await service.login(data);
       if (result) {
         navigate("/home");
       }
     } catch (error) {
-      setApiError("Login failed" + error);
+      setApiError("Login failed: " + error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,9 +85,11 @@ function Login() {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-[#1A80E5] hover:bg-blue-700 text-white py-2 px-4 rounded-xl"
+          disabled={loading}
+          className={`w-full bg-[#1A80E5] text-white py-2 px-4 rounded-xl flex items-center justify-center ${loading ? "opacity-70 cursor-not-allowed" : "hover:bg-blue-700"}`}
         >
-          Log in
+          {loading ? <Loader2 className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" /> : null}
+          {loading ? "Logging in..." : "Log in"}
         </button>
 
         {/* API Error Message */}
@@ -93,11 +101,11 @@ function Login() {
       {/*  Sample Data */}
 
       <div className="text-gray-300 flex justify-center flex-col mt-2 ">
-        <h1> email: manager1@example.com </h1>    
+        <h1> email: manager1@example.com </h1>
         <h1> Password : manager1password123 </h1>
       </div>
       <div className="text-gray-300 flex justify-center flex-col mt-2 ">
-        <h1> email: Thor@example.com </h1>    
+        <h1> email: Thor@example.com </h1>
         <h1> Password : Thorpassword123 </h1>
       </div>
     </div>
